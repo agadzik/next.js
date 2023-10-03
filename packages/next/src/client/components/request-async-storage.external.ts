@@ -11,6 +11,7 @@ export interface RequestStore {
   readonly cookies: ReadonlyRequestCookies
   readonly mutableCookies: ResponseCookies
   readonly draftMode: DraftModeProvider
+  readonly waitUntil: ((() => Promise<unknown>) | Promise<unknown>)[]
 }
 
 export type RequestAsyncStorage = AsyncLocalStorage<RequestStore>

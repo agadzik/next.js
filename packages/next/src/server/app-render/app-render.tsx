@@ -1784,7 +1784,12 @@ export const renderToHTMLOrFlight: AppPageRender = (
       }),
       {
         ...extraRenderResultMeta,
-        waitUntil: Promise.all(staticGenerationStore.pendingRevalidates || []),
+        waitUntil: Promise.all([
+          ...(staticGenerationStore.pendingRevalidates || []),
+          ...requestStore.waitUntil.map((p) =>
+            typeof p === 'function' ? p() : p
+          ),
+        ]),
       }
     )
 

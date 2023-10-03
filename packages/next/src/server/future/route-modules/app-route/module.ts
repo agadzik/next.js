@@ -277,7 +277,7 @@ export class AppRouteRouteModule extends RouteModule<
         RequestAsyncStorageWrapper.wrap(
           this.requestAsyncStorage,
           requestContext,
-          () =>
+          (requestStore) =>
             StaticGenerationAsyncStorageWrapper.wrap(
               this.staticGenerationAsyncStorage,
               staticGenerationContext,
@@ -365,9 +365,12 @@ export class AppRouteRouteModule extends RouteModule<
                     ;(context.renderOpts as any).fetchMetrics =
                       staticGenerationStore.fetchMetrics
 
-                    context.renderOpts.waitUntil = Promise.all(
-                      staticGenerationStore.pendingRevalidates || []
-                    )
+                    context.renderOpts.waitUntil = Promise.all([
+                      ...(staticGenerationStore.pendingRevalidates || []),
+                      ...requestStore.waitUntil.map((p) =>
+                        typeof p === 'function' ? p() : p
+                      ),
+                    ])
 
                     addImplicitTags(staticGenerationStore)
                     ;(context.renderOpts as any).fetchTags =
@@ -376,8 +379,7 @@ export class AppRouteRouteModule extends RouteModule<
                     // It's possible cookies were set in the handler, so we need
                     // to merge the modified cookies and the returned response
                     // here.
-                    const requestStore = this.requestAsyncStorage.getStore()
-                    if (requestStore && requestStore.mutableCookies) {
+                    if (requestStore.mutableCookies) {
                       const headers = new Headers(res.headers)
                       if (
                         appendMutableCookies(

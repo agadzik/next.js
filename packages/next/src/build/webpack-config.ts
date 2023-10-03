@@ -855,6 +855,8 @@ export default async function getBaseWebpackConfig(
               'next/dist/esm/client/components/navigation',
             [`${NEXT_PROJECT_ROOT}/dist/client/components/headers`]:
               'next/dist/esm/client/components/headers',
+            [`${NEXT_PROJECT_ROOT}/dist/client/components/after`]:
+              'next/dist/esm/client/components/after',
           }
         : undefined),
 
