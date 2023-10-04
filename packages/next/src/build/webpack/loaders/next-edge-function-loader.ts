@@ -38,8 +38,8 @@ const nextEdgeFunctionLoader: webpack.LoaderDefinitionFunction<EdgeFunctionLoade
 
     return `
         import 'next/dist/esm/server/web/globals'
-        import { adapter } from 'next/dist/esm/server/web/adapter'
         import { IncrementalCache } from 'next/dist/esm/server/lib/incremental-cache'
+        import { EdgeFunctionWrapper } from 'next/dist/esm/server/web/edge-function-wrapper'
 
         import handler from ${stringifiedPagePath}
 
@@ -47,14 +47,11 @@ const nextEdgeFunctionLoader: webpack.LoaderDefinitionFunction<EdgeFunctionLoade
           throw new Error('The Edge Function "pages${page}" must export a \`default\` function');
         }
 
-        export default function (opts) {
-          return adapter({
-              ...opts,
-              IncrementalCache,
-              page: ${JSON.stringify(page)},
-              handler,
-          })
-        }
+        export default EdgeFunctionWrapper.wrap({
+          IncrementalCache,
+          page: ${JSON.stringify(page)},
+          handler,
+      })
     `
   }
 

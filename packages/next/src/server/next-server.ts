@@ -28,7 +28,7 @@ import type { MiddlewareRouteMatch } from '../shared/lib/router/utils/middleware
 import type { RouteMatch } from './future/route-matches/route-match'
 
 import fs from 'fs'
-import { join, resolve, isAbsolute } from 'path'
+import { join, isAbsolute } from 'path'
 import { IncomingMessage, ServerResponse } from 'http'
 import type { PagesAPIRouteModule } from './future/route-modules/pages-api/module'
 import { addRequestMeta, getRequestMeta } from './request-meta'
@@ -87,7 +87,6 @@ import {
   isPagesAPIRouteMatch,
 } from './future/route-matches/pages-api-route-match'
 import { MatchOptions } from './future/route-matcher-managers/route-matcher-manager'
-import { INSTRUMENTATION_HOOK_FILENAME } from '../lib/constants'
 import { getTracer } from './lib/trace/tracer'
 import { NextNodeServerSpan } from './lib/trace/constants'
 import { nodeFs } from './lib/node-fs-methods'

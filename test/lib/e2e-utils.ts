@@ -328,6 +328,8 @@ export async function renderWithLogs(
 ): Promise<RenderResult> {
   const cliOutputLength = next.cliOutput.length
   const html = await next.render(path)
+  // grab logs on next tick to ensure tasks are finished
+  await new Promise((resolve) => setTimeout(resolve, 0))
   const logs = next.cliOutput.substring(cliOutputLength)
   const buildLogs = next.cliOutput.substring(0, cliOutputLength)
 
@@ -354,6 +356,8 @@ export async function fetchJsonWithLogs(
   const cliOutputLength = next.cliOutput.length
   const res = await next.fetch(path)
   const data = await res.json()
+  // grab logs on next tick to ensure tasks are finished
+  await new Promise((resolve) => setTimeout(resolve, 0))
   const logs = next.cliOutput.substring(cliOutputLength)
   const buildLogs = next.cliOutput.substring(0, cliOutputLength)
 
