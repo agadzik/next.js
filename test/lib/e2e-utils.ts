@@ -308,3 +308,54 @@ export function createNextDescribe(
     fn(context)
   })
 }
+
+type RenderResult = {
+  html: string
+  logs: string
+  buildLogs: string
+}
+
+/**
+ * Renders HTML for a given path with NextInstance and captures the logs generated during the render process.
+ *
+ * @param {NextInstance} next - The instance of Next to perform the render operation.
+ * @param {string} path - The path to render.
+ * @returns {Promise<RenderResult>} Returns the rendered HTML along with the logs captured during rendering.
+ */
+export async function renderWithLogs(
+  next: NextInstance,
+  path: string
+): Promise<RenderResult> {
+  const cliOutputLength = next.cliOutput.length
+  const html = await next.render(path)
+  const logs = next.cliOutput.substring(cliOutputLength)
+  const buildLogs = next.cliOutput.substring(0, cliOutputLength)
+
+  return { html, logs, buildLogs }
+}
+
+type FetchJsonResult = {
+  data: unknown
+  logs: string
+  buildLogs: string
+}
+
+/**
+ * Fetches a JSON resource from a given path with NextInstance and captures the logs generated during the fetch process.
+ *
+ * @param {NextInstance} next - The instance of Next to perform the fetch operation.
+ * @param {string} path - The path to fetch the JSON from.
+ * @returns {Promise<FetchJsonResult>} Returns the fetched data as a JSON object along with the logs captured during fetching.
+ */
+export async function fetchJsonWithLogs(
+  next: NextInstance,
+  path: string
+): Promise<FetchJsonResult> {
+  const cliOutputLength = next.cliOutput.length
+  const res = await next.fetch(path)
+  const data = await res.json()
+  const logs = next.cliOutput.substring(cliOutputLength)
+  const buildLogs = next.cliOutput.substring(0, cliOutputLength)
+
+  return { data, logs, buildLogs }
+}

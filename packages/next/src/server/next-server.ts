@@ -248,28 +248,28 @@ export default class NextNodeServer extends BaseServer {
 
   protected async prepareImpl() {
     await super.prepareImpl()
-    if (
-      !this.serverOptions.dev &&
-      this.nextConfig.experimental.instrumentationHook
-    ) {
-      try {
-        const instrumentationHook = await dynamicRequire(
-          resolve(
-            this.serverOptions.dir || '.',
-            this.serverOptions.conf.distDir!,
-            'server',
-            INSTRUMENTATION_HOOK_FILENAME
-          )
-        )
+    // if (
+    //   !this.serverOptions.dev &&
+    //   this.nextConfig.experimental.instrumentationHook
+    // ) {
+    //   try {
+    //     const instrumentationHook = await dynamicRequire(
+    //       resolve(
+    //         this.serverOptions.dir || '.',
+    //         this.serverOptions.conf.distDir!,
+    //         'server',
+    //         INSTRUMENTATION_HOOK_FILENAME
+    //       )
+    //     )
 
-        await instrumentationHook.register?.()
-      } catch (err: any) {
-        if (err.code !== 'MODULE_NOT_FOUND') {
-          err.message = `An error occurred while loading instrumentation hook: ${err.message}`
-          throw err
-        }
-      }
-    }
+    //     await instrumentationHook.register?.()
+    //   } catch (err: any) {
+    //     if (err.code !== 'MODULE_NOT_FOUND') {
+    //       err.message = `An error occurred while loading instrumentation hook: ${err.message}`
+    //       throw err
+    //     }
+    //   }
+    // }
   }
 
   protected loadEnvConfig({

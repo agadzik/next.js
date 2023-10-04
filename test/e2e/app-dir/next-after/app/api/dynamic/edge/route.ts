@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { after } from 'next/after'
 
-export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {

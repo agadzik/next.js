@@ -1,6 +1,5 @@
 import { after } from 'next/after'
 
-export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
 
 export default async function DynamicEdgePage() {

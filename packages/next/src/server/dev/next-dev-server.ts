@@ -549,17 +549,17 @@ export default class DevServer extends Server {
     ) {
       NextBuildContext!.hasInstrumentationHook = true
 
-      try {
-        const instrumentationHook = await require(pathJoin(
-          this.distDir,
-          'server',
-          INSTRUMENTATION_HOOK_FILENAME
-        ))
-        await instrumentationHook.register()
-      } catch (err: any) {
-        err.message = `An error occurred while loading instrumentation hook: ${err.message}`
-        throw err
-      }
+      // try {
+      //   const instrumentationHook = await require(pathJoin(
+      //     this.distDir,
+      //     'server',
+      //     INSTRUMENTATION_HOOK_FILENAME
+      //   ))
+      //   await instrumentationHook.register()
+      // } catch (err: any) {
+      //   err.message = `An error occurred while loading instrumentation hook: ${err.message}`
+      //   throw err
+      // }
     }
   }
 

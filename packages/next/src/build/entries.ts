@@ -391,6 +391,7 @@ export function getEdgeServerEntry(opts: {
     return {
       import: opts.absolutePagePath,
       filename: `edge-${INSTRUMENTATION_HOOK_FILENAME}.js`,
+      layer: WEBPACK_LAYERS.appRouteHandler,
     }
   }
 
@@ -635,6 +636,7 @@ export async function createEntrypoints(
               import: absolutePagePath,
               // the '../' is needed to make sure the file is not chunked
               filename: `../${INSTRUMENTATION_HOOK_FILENAME}.js`,
+              layer: WEBPACK_LAYERS.appRouteHandler,
             }
           } else if (isAPIRoute(page)) {
             server[serverBundlePath] = [

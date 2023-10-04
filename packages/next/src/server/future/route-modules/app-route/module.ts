@@ -43,6 +43,7 @@ import { requestAsyncStorage } from '../../../../client/components/request-async
 import { staticGenerationAsyncStorage } from '../../../../client/components/static-generation-async-storage.external'
 import { actionAsyncStorage } from '../../../../client/components/action-async-storage.external'
 import * as sharedModules from './shared-modules'
+import { ensureInstrumentationRegistered } from '../../../web/globals'
 
 /**
  * AppRouteRouteHandlerContext is the context that is passed to the route
@@ -346,6 +347,9 @@ export class AppRouteRouteModule extends RouteModule<
                     },
                   },
                   async () => {
+                    // Ensure the instrumentation is registered, if any.
+                    await ensureInstrumentationRegistered()
+
                     // Patch the global fetch.
                     patchFetch({
                       serverHooks: this.serverHooks,

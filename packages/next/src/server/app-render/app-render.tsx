@@ -76,6 +76,7 @@ import { appendMutableCookies } from '../web/spec-extension/adapters/request-coo
 import { createServerInsertedHTML } from './server-inserted-html'
 import { getRequiredScripts } from './required-scripts'
 import { addPathPrefix } from '../../shared/lib/router/utils/add-path-prefix'
+import { ensureInstrumentationRegistered } from '../web/globals'
 
 export type GetDynamicParamFromSegment = (
   // [slug] / [[slug]] / [...slug]
@@ -277,6 +278,9 @@ export const renderToHTMLOrFlight: AppPageRender = (
         `Invariant: Render expects to have requestAsyncStorage, none found`
       )
     }
+
+    // Ensure the instrumentation is registered, if any.
+    await ensureInstrumentationRegistered()
 
     // don't modify original query object
     query = { ...query }
