@@ -4,6 +4,7 @@ import { NextFetchEvent } from './spec-extension/fetch-event'
 import type { NextMiddleware, NextMiddlewareResult } from './types'
 import { RequestAsyncStorageWrapper } from '../async-storage/request-async-storage-wrapper'
 import { requestAsyncStorage } from '../../client/components/request-async-storage.external'
+import { ensureInstrumentationRegistered } from './globals'
 
 export class EdgeFunctionWrapper {
   private readonly functionHandler: NextMiddleware
@@ -35,6 +36,9 @@ export class EdgeFunctionWrapper {
       requestAsyncStorage,
       { req: request },
       async (requestStore) => {
+        console.log('[EdgeFunction] handler')
+        await ensureInstrumentationRegistered()
+
         // Get the response from the handler.
         const response = await this.functionHandler(request, evt)
 

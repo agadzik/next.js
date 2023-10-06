@@ -37,7 +37,6 @@ const nextEdgeFunctionLoader: webpack.LoaderDefinitionFunction<EdgeFunctionLoade
     buildInfo.rootDir = rootDir
 
     return `
-        import 'next/dist/esm/server/web/globals'
         import { IncrementalCache } from 'next/dist/esm/server/lib/incremental-cache'
         import { EdgeFunctionWrapper } from 'next/dist/esm/server/web/edge-function-wrapper'
 
@@ -51,7 +50,7 @@ const nextEdgeFunctionLoader: webpack.LoaderDefinitionFunction<EdgeFunctionLoade
           IncrementalCache,
           page: ${JSON.stringify(page)},
           handler,
-      })
+        })
     `
   }
 
