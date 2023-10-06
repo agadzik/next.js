@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { after } from 'next/after'
+import { after } from 'next/server'
 
 type ResponseData = {
   runtime: string

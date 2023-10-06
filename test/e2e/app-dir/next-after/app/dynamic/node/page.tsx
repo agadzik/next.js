@@ -1,4 +1,4 @@
-import { after } from 'next/after'
+import { after } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'

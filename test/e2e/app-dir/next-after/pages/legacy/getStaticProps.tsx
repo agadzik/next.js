@@ -1,5 +1,5 @@
 import type { InferGetStaticPropsType } from 'next'
-import { after } from 'next/after'
+import { after } from 'next/server'
 
 export const getStaticProps = async (context) => {
   after(async () => {

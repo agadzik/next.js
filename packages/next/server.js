@@ -9,6 +9,7 @@ const serverExports = {
     .userAgentFromString,
   userAgent: require('next/dist/server/web/spec-extension/user-agent')
     .userAgent,
+  after: require('next/dist/server/after').after,
 }
 
 if (typeof URLPattern !== 'undefined') {
@@ -27,3 +28,4 @@ exports.ImageResponse = serverExports.ImageResponse
 exports.userAgentFromString = serverExports.userAgentFromString
 exports.userAgent = serverExports.userAgent
 exports.URLPattern = serverExports.URLPattern
+exports.after = serverExports.after

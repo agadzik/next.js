@@ -1,4 +1,4 @@
-import { after } from 'next/after'
+import { after } from 'next/server'
 
 export async function register() {
   console.log('register instrumentation')

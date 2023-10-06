@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { after } from 'next/after'
+import { after } from 'next/server'
 
 export const runtime = 'edge'
 

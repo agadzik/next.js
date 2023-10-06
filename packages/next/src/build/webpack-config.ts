@@ -855,8 +855,6 @@ export default async function getBaseWebpackConfig(
               'next/dist/esm/client/components/navigation',
             [`${NEXT_PROJECT_ROOT}/dist/client/components/headers`]:
               'next/dist/esm/client/components/headers',
-            [`${NEXT_PROJECT_ROOT}/dist/client/components/after`]:
-              'next/dist/esm/client/components/after',
           }
         : undefined),
 
@@ -1557,6 +1555,15 @@ export default async function getBaseWebpackConfig(
             or: WEBPACK_LAYERS.GROUP.nonClientServerTarget,
           },
         },
+        {
+          // Make sure that AsyncLocalStorage module instance is shared between server and client
+          // layers.
+          // This is needed for all page types not just appDir because of the `after` function from
+          // `next/server`.  We currently support `after` in the instrumentation hook,
+          // getStaticProps / getServerSideProps, RSCs and Route Handlers
+          layer: WEBPACK_LAYERS.shared,
+          test: asyncStoragesRegex,
+        },
         ...(hasAppDir
           ? [
               {
@@ -1566,12 +1573,6 @@ export default async function getBaseWebpackConfig(
                     '|'
                   )})$`
                 ),
-              },
-              {
-                // Make sure that AsyncLocalStorage module instance is shared between server and client
-                // layers.
-                layer: WEBPACK_LAYERS.shared,
-                test: asyncStoragesRegex,
               },
               // Convert metadata routes to separate layer
               {

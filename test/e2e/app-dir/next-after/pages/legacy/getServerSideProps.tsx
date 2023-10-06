@@ -1,5 +1,5 @@
 import type { InferGetServerSidePropsType } from 'next'
-import { after } from 'next/after'
+import { after } from 'next/server'
 
 export const getServerSideProps = async (context) => {
   after(async () => {
