@@ -1,7 +1,5 @@
-import {
-  RequestStore,
-  requestAsyncStorage,
-} from '../client/components/request-async-storage.external'
+import type { RequestStore } from '../client/components/request-async-storage.external'
+import { requestAsyncStorage } from '../client/components/request-async-storage.external'
 
 export function after(
   asyncFunctionOrPromise: RequestStore['waitUntil'][number]
