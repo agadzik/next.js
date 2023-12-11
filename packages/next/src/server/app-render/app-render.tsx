@@ -1071,12 +1071,18 @@ async function renderToHTMLOrFlightImpl(
     formState,
   })
 
+  const requestStoreWaitUntilTasks = requestStore.waitUntil.map((p) =>
+    typeof p === 'function' ? p() : p
+  )
+
   // If we have pending revalidates, wait until they are all resolved.
   if (staticGenerationStore.pendingRevalidates) {
     options.waitUntil = Promise.all([
       ...Object.values(staticGenerationStore.pendingRevalidates),
-      ...requestStore.waitUntil.map((p) => (typeof p === 'function' ? p() : p)),
+      ...requestStoreWaitUntilTasks,
     ])
+  } else {
+    options.waitUntil = Promise.all(requestStoreWaitUntilTasks)
   }
 
   addImplicitTags(staticGenerationStore)
