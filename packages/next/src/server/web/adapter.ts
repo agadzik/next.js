@@ -16,6 +16,7 @@ import {
   RSC,
 } from '../../client/components/app-router-headers'
 import { NEXT_QUERY_PARAM_PREFIX } from '../../lib/constants'
+import { ensureInstrumentationRegistered } from './globals'
 import { RequestAsyncStorageWrapper } from '../async-storage/request-async-storage-wrapper'
 import { requestAsyncStorage } from '../../client/components/request-async-storage.external'
 import { PrerenderManifest } from '../../build'
@@ -62,6 +63,8 @@ export type AdapterOptions = {
 export async function adapter(
   params: AdapterOptions
 ): Promise<FetchEventResult> {
+  await ensureInstrumentationRegistered()
+
   // TODO-APP: use explicit marker for this
   const isEdgeRendering = typeof self.__BUILD_MANIFEST !== 'undefined'
   const prerenderManifest: PrerenderManifest | undefined =

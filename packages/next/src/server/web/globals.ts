@@ -67,6 +67,9 @@ function enhanceGlobals() {
       configurable: false,
     })
   }
+
+  // Eagerly fire instrumentation hook to make the startup faster.
+  void ensureInstrumentationRegistered()
 }
 
 enhanceGlobals()
