@@ -27,6 +27,12 @@ import { RequestAsyncStorageWrapper } from '../../../async-storage/request-async
 import { requestAsyncStorage } from '../../../../client/components/request-async-storage.external'
 
 /**
+ * The PagesModule is the type of the module exported by the bundled pages
+ * module.
+ */
+export type PagesModule = typeof import('../../../../build/templates/pages')
+
+/**
  * The userland module for a page. This is the module that is exported from the
  * page file that contains the page component, page config, and any page data
  * fetching functions.
