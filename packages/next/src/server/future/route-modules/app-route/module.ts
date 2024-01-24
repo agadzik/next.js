@@ -373,9 +373,6 @@ export class AppRouteRouteModule extends RouteModule<
                       ...Object.values(
                         staticGenerationStore.pendingRevalidates || []
                       ),
-                      ...requestStore.waitUntil.map((p) =>
-                        typeof p === 'function' ? p() : p
-                      ),
                     ])
 
                     addImplicitTags(staticGenerationStore)

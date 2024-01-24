@@ -44,6 +44,18 @@ createNextDescribe(
         expect(logs).toContain('after DynamicNodePage')
       })
 
+      it('should work with dynamic node pages with Suspense', async () => {
+        const { html, logs } = await renderWithLogs(
+          next,
+          '/dynamic/node/suspense'
+        )
+
+        expect(html).toContain('Dynamic Node Page With Suspense')
+        expect(html).toContain('Async Component')
+        expect(logs).toContain('after DynamicNodeWithSuspensePage')
+        expect(logs).toContain('after AsyncComponent')
+      })
+
       it('should work with dynamic node route handlers', async () => {
         const { data, logs } = await fetchJsonWithLogs(
           next,
@@ -124,7 +136,7 @@ createNextDescribe(
             expect(buildLogs).toContain('after api/static/node')
           })
 
-          it('should work with getStaticProps pages at build time only', async () => {
+          it.only('should work with getStaticProps pages at build time only', async () => {
             const { html, logs, buildLogs } = await renderWithLogs(
               next,
               '/legacy/getStaticProps'

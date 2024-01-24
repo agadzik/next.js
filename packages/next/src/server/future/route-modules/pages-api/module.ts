@@ -7,9 +7,7 @@ import type { RouteModuleOptions } from '../route-module'
 
 import { RouteModule, type RouteModuleHandleContext } from '../route-module'
 import { apiResolver } from '../../../api-utils/node/api-resolver'
-import { RequestAsyncStorageWrapper } from '../../../async-storage/request-async-storage-wrapper'
-
-import { requestAsyncStorage } from '../../../../client/components/request-async-storage.external'
+import { internal_getAfterTasks } from '../../../after'
 
 type PagesAPIHandleFn = (
   req: IncomingMessage,
@@ -128,35 +126,32 @@ export class PagesAPIRouteModule extends RouteModule<
     res: ServerResponse,
     context: PagesAPIRouteHandlerContext
   ): Promise<void> {
-    // We wrap render in the RequestAsyncStorageWrapper so that we can
-    // support next/after in API routes
-    RequestAsyncStorageWrapper.wrap(
-      requestAsyncStorage,
-      { req, res },
-      async (requestStore) => {
-        await apiResolver(
-          req,
-          res,
-          context.query,
-          this.userland,
-          {
-            ...context.previewProps,
-            revalidate: context.revalidate,
-            trustHostHeader: context.trustHostHeader,
-            allowedRevalidateHeaderKeys: context.allowedRevalidateHeaderKeys,
-            hostname: context.hostname,
-          },
-          context.minimalMode,
-          context.dev,
-          context.page
-        )
-
-        // there's no concept of `waitUntil` in the API routes so just await all of them
-        await Promise.all(
-          requestStore.waitUntil.map((p) => (typeof p === 'function' ? p() : p))
-        )
-      }
+    await apiResolver(
+      req,
+      res,
+      context.query,
+      this.userland,
+      {
+        ...context.previewProps,
+        revalidate: context.revalidate,
+        trustHostHeader: context.trustHostHeader,
+        allowedRevalidateHeaderKeys: context.allowedRevalidateHeaderKeys,
+        hostname: context.hostname,
+      },
+      context.minimalMode,
+      context.dev,
+      context.page
     )
+
+    // Theres no concept of `waitUntil` in the Pages API, so we need to
+    // manually call the after tasks here.
+    const afterTasks = internal_getAfterTasks()
+
+    if (afterTasks.length > 0) {
+      await Promise.all(
+        afterTasks.map((task) => (typeof task === 'function' ? task() : task))
+      )
+    }
   }
 }
 

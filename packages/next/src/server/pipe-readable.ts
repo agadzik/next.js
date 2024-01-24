@@ -5,6 +5,7 @@ import {
   createAbortController,
 } from './web/spec-extension/adapters/next-request'
 import { DetachedPromise } from '../lib/detached-promise'
+import { internal_getAfterTasks } from './after'
 
 export function isAbortError(e: any): e is Error & { name: 'AbortError' } {
   return e?.name === 'AbortError' || e?.name === ResponseAbortedName
@@ -79,9 +80,18 @@ function createWriterFromResponse(
     close: async () => {
       // if a waitUntil promise was passed, wait for it to resolve before
       // ending the response.
-      if (waitUntilForEnd) {
-        await waitUntilForEnd
+      const afterTasks = internal_getAfterTasks()
+      console.log('[pipe-readable]: handling after tasks...', afterTasks.length)
+      if (waitUntilForEnd || afterTasks.length > 0) {
+        await Promise.all([
+          waitUntilForEnd,
+          ...afterTasks.map((task) =>
+            typeof task === 'function' ? task() : task
+          ),
+        ])
       }
+
+      console.log('[pipe-readable]: closing response')
 
       if (res.writableFinished) return
 

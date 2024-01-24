@@ -14,6 +14,7 @@ import type { NextFetchEvent } from './spec-extension/fetch-event'
 import { internal_getCurrentFunctionWaitUntil } from './internal-edge-wait-until'
 import { getUtils } from '../server-utils'
 import { searchParamsToUrlQuery } from '../../shared/lib/router/utils/querystring'
+import { internal_getAfterTasks } from '../after'
 
 type WrapOptions = Partial<Pick<AdapterOptions, 'page'>>
 
@@ -112,7 +113,11 @@ export class EdgeRouteModuleWrapper {
     // Get the response from the handler.
     const res = await this.routeModule.handle(request, context)
 
-    const waitUntilPromises = [internal_getCurrentFunctionWaitUntil()]
+    const afterTasks = internal_getAfterTasks()
+    const waitUntilPromises = [
+      internal_getCurrentFunctionWaitUntil(),
+      ...afterTasks.map((task) => (typeof task === 'function' ? task() : task)),
+    ]
     if (context.renderOpts.waitUntil) {
       waitUntilPromises.push(context.renderOpts.waitUntil)
     }

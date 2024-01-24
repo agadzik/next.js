@@ -87,7 +87,6 @@ export const RequestAsyncStorageWrapper: AsyncStorageWrapper<
       cookies?: ReadonlyRequestCookies
       mutableCookies?: ResponseCookies
       draftMode?: DraftModeProvider
-      waitUntil?: RequestStore['waitUntil']
     } = {}
 
     const store: RequestStore = {
@@ -130,13 +129,6 @@ export const RequestAsyncStorageWrapper: AsyncStorageWrapper<
         }
 
         return cache.draftMode
-      },
-      get waitUntil() {
-        if (!cache.waitUntil) {
-          cache.waitUntil = []
-        }
-
-        return cache.waitUntil
       },
     }
 

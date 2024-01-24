@@ -7,6 +7,7 @@ import { generateETag } from './lib/etag'
 import fresh from 'next/dist/compiled/fresh'
 import { formatRevalidate } from './lib/revalidate'
 import { RSC_CONTENT_TYPE_HEADER } from '../client/components/app-router-headers'
+import { internal_getAfterTasks } from './after'
 
 export function sendEtagResponse(
   req: IncomingMessage,
@@ -49,7 +50,9 @@ export async function sendRenderResult({
   poweredByHeader: boolean
   revalidate: Revalidate | undefined
 }): Promise<void> {
+  const afterTasks = internal_getAfterTasks()
   if (isResSent(res)) {
+    console.log('[send-payload]: res sent', req.url, afterTasks.length)
     return
   }
 
@@ -66,6 +69,7 @@ export async function sendRenderResult({
   if (payload !== null) {
     const etag = generateEtags ? generateETag(payload) : undefined
     if (sendEtagResponse(req, res, etag)) {
+      console.log('[send-payload]: etag res', req.url, afterTasks.length)
       return
     }
   }
@@ -88,14 +92,23 @@ export async function sendRenderResult({
   }
 
   if (req.method === 'HEAD') {
+    console.log('[send-payload]: head method', req.url, afterTasks.length)
     res.end(null)
     return
   }
 
   if (payload !== null) {
+    console.log('[send-payload]: return payload', req.url, afterTasks.length)
+    if (afterTasks.length > 0) {
+      await Promise.all(
+        afterTasks.map((task) => (typeof task === 'function' ? task() : task))
+      )
+    }
     res.end(payload)
     return
   }
+
+  console.log('[send-payload]: piping', req.url, afterTasks.length)
 
   // Pipe the render result to the response after we get a writer for it.
   await result.pipeToNodeResponse(res)

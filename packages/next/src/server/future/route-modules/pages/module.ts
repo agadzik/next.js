@@ -17,14 +17,8 @@ import {
   type RouteModuleHandleContext,
   type RouteModuleOptions,
 } from '../route-module'
-import {
-  renderToHTMLImpl,
-  renderToHTML as _renderToHTML,
-} from '../../../render'
+import { renderToHTMLImpl, renderToHTML } from '../../../render'
 import * as vendoredContexts from './vendored/contexts/entrypoints'
-import { RequestAsyncStorageWrapper } from '../../../async-storage/request-async-storage-wrapper'
-
-import { requestAsyncStorage } from '../../../../client/components/request-async-storage.external'
 
 /**
  * The PagesModule is the type of the module exported by the bundled pages
@@ -128,60 +122,26 @@ export class PagesRouteModule extends RouteModule<
     res: ServerResponse,
     context: PagesRouteHandlerContext
   ): Promise<RenderResult> {
-    // We wrap render in the RequestAsyncStorageWrapper so that we can
-    // support next/after in getStaticProps / getServerSideProps during `next dev`
-    return RequestAsyncStorageWrapper.wrap(
-      requestAsyncStorage,
-      { req, res },
-      async (requestStore) => {
-        const result = await renderToHTMLImpl(
-          req,
-          res,
-          context.page,
-          context.query,
-          context.renderOpts,
-          {
-            App: this.components.App,
-            Document: this.components.Document,
-          }
-        )
-
-        // there's no concept of `waitUntil` in the API routes so just await all of them
-        await Promise.all(
-          requestStore.waitUntil.map((p) => (typeof p === 'function' ? p() : p))
-        )
-
-        return result
+    console.trace('PagesRouteModule.render')
+    return renderToHTMLImpl(
+      req,
+      res,
+      context.page,
+      context.query,
+      context.renderOpts,
+      {
+        App: this.components.App,
+        Document: this.components.Document,
       }
     )
   }
 }
 
-// needed for the static build
-export const renderToHTML: typeof _renderToHTML = async (
-  ...args: Parameters<typeof _renderToHTML>
-) => {
-  console.log('[PagesRouteModule] renderToHTML', args[0].url)
-  // We wrap renderToHTML in the RequestAsyncStorageWrapper so that we can
-  // support next/after in getStaticProps / getServerSideProps during the build
-  return RequestAsyncStorageWrapper.wrap(
-    requestAsyncStorage,
-    { req: args[0], res: args[1] },
-    async (requestStore) => {
-      const result = await _renderToHTML(...args)
-
-      // there's no concept of `waitUntil` in the API routes so just await all of them
-      await Promise.all(
-        requestStore.waitUntil.map((p) => (typeof p === 'function' ? p() : p))
-      )
-
-      return result
-    }
-  )
-}
-
-export const vendored = {
+const vendored = {
   contexts: vendoredContexts,
 }
+
+// needed for the static build
+export { renderToHTML, vendored }
 
 export default PagesRouteModule

@@ -17,6 +17,7 @@ import type { PrerenderManifest } from '../../..'
 import { normalizeAppPath } from '../../../../shared/lib/router/utils/app-paths'
 import type { SizeLimit } from '../../../../../types'
 import { internal_getCurrentFunctionWaitUntil } from '../../../../server/web/internal-edge-wait-until'
+import { internal_getAfterTasks } from '../../../../server/after'
 
 export function getRender({
   dev,
@@ -155,9 +156,17 @@ export function getRender({
     const result = await extendedRes.toResponse()
 
     if (event && event.waitUntil) {
+      const afterTasks = internal_getAfterTasks()
       const waitUntilPromise = internal_getCurrentFunctionWaitUntil()
-      if (waitUntilPromise) {
-        event.waitUntil(waitUntilPromise)
+      if (waitUntilPromise || afterTasks.length > 0) {
+        event.waitUntil(
+          Promise.all([
+            waitUntilPromise,
+            ...afterTasks.map((task) =>
+              typeof task === 'function' ? task() : task
+            ),
+          ])
+        )
       }
     }
 

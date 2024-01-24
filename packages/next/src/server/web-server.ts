@@ -295,6 +295,8 @@ export default class NextWebServer extends BaseServer<WebServerOptions> {
 
     res.send()
 
+    console.trace('[web-server] sendRenderResult')
+
     // If we have a promise, wait for it to resolve.
     if (promise) await promise
   }
